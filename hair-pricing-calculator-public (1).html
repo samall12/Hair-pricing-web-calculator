@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hair Stylist Pricing Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: sans-serif; background: #f9fafb; padding: 2rem; }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    label { display: block; margin-top: 1rem; }
+    input { width: 100%; padding: 0.5rem; margin-top: 0.25rem; }
+    .summary { margin-top: 2rem; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    .summary p { margin: 0.5rem 0; }
+    .total { font-weight: bold; font-size: 1.2rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hair Stylist Pricing Calculator</h1>
+    <label>Service Time (hours)
+      <input type="number" id="hours" value="0">
+    </label>
+    <label>Service Time (minutes)
+      <input type="number" id="minutes" value="0">
+    </label>
+    <label>Product Cost (£)
+      <input type="number" id="productCost" value="0">
+    </label>
+    <label>Take-home per Hour (£)
+      <input type="number" id="takeHome" value="40">
+    </label>
+    <label>VAT Rate (%)
+      <input type="number" id="vat" value="20">
+    </label>
+    <label>Income Tax Rate (%)
+      <input type="number" id="incomeTax" value="20">
+    </label>
+    <label>National Insurance Rate (%)
+      <input type="number" id="ni" value="12">
+    </label>
+
+    <div class="summary" id="results"></div>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('input');
+    const resultsDiv = document.getElementById('results');
+
+    inputs.forEach(input => input.addEventListener('input', calculate));
+
+    function calculate() {
+      const hours = parseFloat(document.getElementById('hours').value) || 0;
+      const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+      const productCost = parseFloat(document.getElementById('productCost').value) || 0;
+      const takeHome = parseFloat(document.getElementById('takeHome').value) || 0;
+      const vatRate = parseFloat(document.getElementById('vat').value) || 0;
+      const incomeTaxRate = parseFloat(document.getElementById('incomeTax').value) || 0;
+      const niRate = parseFloat(document.getElementById('ni').value) || 0;
+
+      const time = hours + minutes / 60;
+      const base = time * takeHome;
+      const incomeTax = base * (incomeTaxRate / 100);
+      const ni = base * (niRate / 100);
+      const net = base + productCost + incomeTax + ni;
+      const vat = net * (vatRate / 100);
+      const gross = net + vat;
+
+      resultsDiv.innerHTML = `
+        <h2>Calculation Summary</h2>
+        <p><strong>Base (£):</strong> ${base.toFixed(2)}</p>
+        <p><strong>Product Cost (£):</strong> ${productCost.toFixed(2)}</p>
+        <p><strong>Income Tax (${incomeTaxRate}%) (£):</strong> ${incomeTax.toFixed(2)}</p>
+        <p><strong>National Insurance (${niRate}%) (£):</strong> ${ni.toFixed(2)}</p>
+        <p><strong>Net Total Before VAT (£):</strong> ${net.toFixed(2)}</p>
+        <p><strong>VAT (${vatRate}%) (£):</strong> ${vat.toFixed(2)}</p>
+        <p class="total"><strong>Gross Total (£):</strong> ${gross.toFixed(2)}</p>
+      `;
+    }
+
+    calculate(); // initial render
+  </script>
+</body>
+</html>
